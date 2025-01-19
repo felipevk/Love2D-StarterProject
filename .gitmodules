@@ -10,3 +10,6 @@
 [submodule "Game/libraries/Moses"]
 	path = Game/libraries/Moses
 	url = https://github.com/Yonaba/Moses.git
+[submodule "Game/libraries/draft"]
+	path = Game/libraries/draft
+	url = https://github.com/pelevesque/draft
