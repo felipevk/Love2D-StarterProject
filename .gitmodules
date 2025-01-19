@@ -13,3 +13,6 @@
 [submodule "Game/libraries/draft"]
 	path = Game/libraries/draft
 	url = https://github.com/pelevesque/draft
+[submodule "Game/libraries/windfield"]
+	path = Game/libraries/windfield
+	url = https://github.com/a327ex/windfield
