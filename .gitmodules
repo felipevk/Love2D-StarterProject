@@ -17,7 +17,7 @@
 	path = Game/libraries/windfield
 	url = https://github.com/a327ex/windfield
 [submodule "Game/libraries/anim8"]
-	path = game/libraries/anim8
+	path = Game/libraries/anim8
 	url = https://github.com/kikito/anim8.git
 [submodule "Game/libraries/Simple-Tiled-Implementation"]
 	path = Game/libraries/Simple-Tiled-Implementation
