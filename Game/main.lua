@@ -6,6 +6,7 @@ Camera = require 'libraries/hump/camera'
 Vector = require 'libraries/hump/vector'
 Physics = require 'libraries/windfield/windfield'
 Draft = require 'libraries/draft/draft'
+Anim8 = require 'libraries/anim8/anim8'
 
 require 'libraries/utf8/utf8'
 require 'globals'
