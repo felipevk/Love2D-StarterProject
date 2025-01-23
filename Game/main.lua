@@ -11,7 +11,7 @@ sti = require 'libraries/Simple-Tiled-Implementation/sti'
 
 require 'libraries/utf8/utf8'
 require 'globals'
-
+require "utils"
 
 function love.load()
     input = Input()
