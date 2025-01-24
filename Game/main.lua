@@ -19,11 +19,18 @@ function love.load()
     camera = Camera()
     draft = Draft()
 
+    resize(1)
+
     GameObject = require("objects/GameObject")
 
     local object_files = {}
     recursiveEnumerate('objects', object_files)
     requireFiles(object_files)
+
+    local room_files = {}
+    recursiveEnumerate('rooms', room_files)
+    requireFiles(room_files)
+    current_room = nil
 
     slow_amount = 1
 
@@ -38,7 +45,7 @@ function love.load()
     input:bind('w', 'up')
     input:bind('s', 'down')
 
-    demoFont = love.graphics.newFont(40)
+    gotoRoom("Room")
 end
 
 function love.update(dt)
@@ -47,6 +54,8 @@ function love.update(dt)
 end
 
 function love.draw()
+    if current_room then current_room:draw() end
+
     if flash_frames then 
         flash_frames = flash_frames - 1
         if flash_frames == -1 then flash_frames = nil end
@@ -56,14 +65,15 @@ function love.draw()
         love.graphics.rectangle('fill', 0, 0, sx*gw, sy*gh)
         love.graphics.setColor(1, 1, 1)
     end
-
-    love.graphics.setFont(demoFont)
-    printInsideRect("Hello Love2D!", demoFont, "center")
 end
 
 function love.keypressed(key)
 end
 
+function gotoRoom(room_type, ...)
+    if current_room and current_room.destroy then current_room:destroy() end
+    current_room = _G[room_type](...)
+end
 
 --[[
     Stores all possible object files into a table

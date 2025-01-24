@@ -1,7 +1,7 @@
 gw = 960
 gh = 540 
-sx = 1
-sy = 1
+sx = 2
+sy = 2
 
 
 function love.conf(t)
