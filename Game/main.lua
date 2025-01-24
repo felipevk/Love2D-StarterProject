@@ -53,6 +53,7 @@ end
 function love.update(dt)
     timer:update(dt*slow_amount)
     camera:update(dt*slow_amount)
+    if current_room then current_room:update(dt*slow_amount) end
     if debug then debugTools:update(dt) end
 end
 
