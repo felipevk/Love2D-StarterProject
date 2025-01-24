@@ -58,7 +58,7 @@ function love.draw()
     end
 
     love.graphics.setFont(demoFont)
-    love.graphics.printf("Hello Love2D!", 0, 250, love.graphics.getWidth(), "center")
+    printInsideRect("Hello Love2D!", demoFont, "center")
 end
 
 function love.keypressed(key)

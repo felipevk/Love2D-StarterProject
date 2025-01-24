@@ -102,3 +102,74 @@ function chanceList(...)
         end
     }
 end
+
+--[[
+    Renders text inside a corner of a rect.
+    If no rect is given, screen will be used as rect.
+]]
+function printInsideRect(text, font, side, offset, rect)
+
+    x = 0
+    y = 0
+    ox = 0
+    oy = 0 
+    offset = offset or 0
+
+    screenRect = {
+        x = 0,
+        y = 0,
+        w = gw,
+        h = gh,
+    }
+
+    rect = rect or screenRect
+
+    if side == 'center' then
+        x = rect.x + rect.w / 2
+        y = rect.y + rect.h / 2
+        ox = font:getWidth(text) / 2
+        oy = font:getHeight() / 2
+    elseif side == 'top' then
+        x = rect.x + rect.w / 2
+        y = rect.y + offset
+        ox = font:getWidth(text) / 2
+        oy = 0
+    elseif side == 'bottom' then
+        x = rect.x + rect.w / 2
+        y = rect.y + rect.h - offset
+        ox = font:getWidth(text) / 2
+        oy = font:getHeight()
+    elseif side == 'left' then
+        x = rect.x + offset
+        y = rect.y + rect.h / 2
+        ox = 0
+        oy = font:getHeight() / 2
+    elseif side == 'right' then
+        x = rect.x + rect.w - offset
+        y = rect.y + rect.h / 2
+        ox = font:getWidth(text)
+        oy = font:getHeight() / 2
+    elseif side == 'topLeft' then
+        x = rect.x +  offset
+        y = rect.y + offset
+        ox = 0
+        oy = 0
+    elseif side == 'topRight' then
+        x = rect.x + rect.w - offset
+        y = rect.y + offset
+        ox = font:getWidth(text)
+        oy = 0
+    elseif side == 'bottomLeft' then
+        x = rect.x + offset
+        y = rect.y + rect.h - offset
+        ox = 0
+        oy = font:getHeight()
+    elseif side == 'bottomRight' then
+        x = rect.x + rect.w - offset
+        y = rect.y + rect.h - offset
+        ox = font:getWidth(text)
+        oy = font:getHeight()
+    end
+
+    love.graphics.print(text, x, y, 0, 1, 1, ox, oy)
+end
