@@ -19,7 +19,7 @@ function love.load()
     camera = Camera()
     draft = Draft()
 
-    resize(1)
+    --resize(2)
 
     GameObject = require("objects/GameObject")
 
@@ -46,11 +46,14 @@ function love.load()
     input:bind('s', 'down')
 
     gotoRoom("Room")
+
+    if debug then debugTools = DebugTools() end
 end
 
 function love.update(dt)
     timer:update(dt*slow_amount)
     camera:update(dt*slow_amount)
+    if debug then debugTools:update(dt) end
 end
 
 function love.draw()
@@ -65,6 +68,8 @@ function love.draw()
         love.graphics.rectangle('fill', 0, 0, sx*gw, sy*gh)
         love.graphics.setColor(1, 1, 1)
     end
+
+    if debug then debugTools:draw() end
 end
 
 function love.keypressed(key)
@@ -170,4 +175,5 @@ end
 
 function AddTestShortcuts()
     input:bind('f1', checkGC )
+    input:bind('f3', function() debug = not debug end )
 end
