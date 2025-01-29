@@ -36,6 +36,7 @@ function love.load()
     slow_amount = 1
 
     flash_frames = nil
+    flashColor = {1,1,1,1}
 
     textures = LoadTextures("resources/sprites")
     fonts = LoadFonts("resources/fonts")
@@ -72,7 +73,7 @@ function love.draw()
         if flash_frames == -1 then flash_frames = nil end
     end
     if flash_frames then
-        love.graphics.setColor(1, 1, 1) --change to background color
+        love.graphics.setColor(flashColor)
         love.graphics.rectangle('fill', 0, 0, sx*gw, sy*gh)
         love.graphics.setColor(1, 1, 1)
     end
@@ -98,8 +99,9 @@ function slow(amount, duration)
     timer:tween('slow', duration, _G, {slow_amount = 1}, 'in-out-cubic')
 end
 
-function flash(frames)
+function flash(frames, color)
     flash_frames = frames
+    flashColor = color or {1,1,1,0.5}
 end
 
 function checkGC()
