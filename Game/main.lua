@@ -12,6 +12,7 @@ sti = require 'libraries/Simple-Tiled-Implementation/sti'
 require 'libraries/utf8/utf8'
 require 'globals'
 require "utils"
+require 'ResourceLoader'
 
 function love.load()
     input = Input()
@@ -35,6 +36,11 @@ function love.load()
     slow_amount = 1
 
     flash_frames = nil
+
+    textures = LoadTextures("resources/sprites")
+    fonts = LoadFonts("resources/fonts")
+    audioStream = LoadSounds("resources/audio/stream", "stream")
+    audioStatic = LoadSounds("resources/audio/static", "static")
 
     input:bind('left', 'left')
     input:bind('right', 'right')
@@ -79,34 +85,6 @@ end
 function gotoRoom(room_type, ...)
     if current_room and current_room.destroy then current_room:destroy() end
     current_room = _G[room_type](...)
-end
-
---[[
-    Stores all possible object files into a table
-]]
-function recursiveEnumerate(folder, file_list)
-    local items = love.filesystem.getDirectoryItems(folder)
-    for _, item in ipairs(items) do
-        local file = folder .. '/' .. item
-        if love.filesystem.getInfo(file) then
-            table.insert(file_list, file)
-        elseif love.filesystem.isDirectory(file) then
-            recursiveEnumerate(file, file_list)
-        end
-    end
-end
-
---[[
-    Imports files from a table
-]]
-function requireFiles(files)
-    for _, file in ipairs(files) do
-        local file = file:sub(1, -5)
-        local className = file:match("([^/]+)$")
-        if not _G[className] then
-            _G[className] = require(file)
-        end
-    end
 end
 
 function resize(s)

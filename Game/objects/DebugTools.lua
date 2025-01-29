@@ -13,7 +13,7 @@ function DebugTools:new()
         },
         message = nil,
         color = { 0, 1, 0, 1},
-        font = love.graphics.newFont('resources/fonts/PixelTandysoft-0rJG.ttf', 20)
+        font = love.graphics.newFont('resources/fonts/PixelTandysoft.ttf', 20)
     }
     input:bind('mouse2', 'rMouse')
 end
