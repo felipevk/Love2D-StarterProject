@@ -73,3 +73,19 @@ function LoadSounds(folder, mode)
 
     return sounds
 end
+
+function LoadShaders(folder)
+    local files = {}
+
+    local object_files = {}
+    recursiveEnumerate(folder, files)
+
+    local sounds = {}
+
+    for _, file in ipairs(files) do
+        local filename, extension = file:match("^.+/(.+)%.(.+)$")
+        sounds[filename] = love.graphics.newShader(file)
+    end
+
+    return sounds
+end

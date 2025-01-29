@@ -41,6 +41,7 @@ function love.load()
     fonts = LoadFonts("resources/fonts")
     audioStream = LoadSounds("resources/audio/stream", "stream")
     audioStatic = LoadSounds("resources/audio/static", "static")
+    shaders = LoadShaders("resources/shaders")
 
     input:bind('left', 'left')
     input:bind('right', 'right')
