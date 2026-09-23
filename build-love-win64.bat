@@ -1,7 +1,7 @@
 @echo off
 set loveVer=11.5
 set loveFolder=love-%loveVer%-win64
-set buildFolder=bin\%~n1-win64
+set buildFolder=bin\%~n1-win64-love
 
 if not exist %loveFolder%\ (
 	echo This script requires love version %loveVer%
@@ -32,16 +32,13 @@ xcopy %loveFolder%\license.txt %buildFolder%
 for %%I in (%loveFolder%\*.dll) do (
 	xcopy %%I %buildFolder%
 )
+xcopy  %loveFolder%\love.exe %buildFolder%
 
 :: zip project files and change extension to .love
 cd %1\
 7z.exe a -r "..\%buildFolder%\%~n1.zip" 
 cd ../
-ren %buildFolder%\%~n1.zip %~n1.love 
-
-:: combine love.exe with .love file to final game exe
-copy /b %loveFolder%\love.exe+%buildFolder%\%~n1.love "%buildFolder%\%~n1.exe"
-del %buildFolder%\%~n1.love
+ren %buildFolder%\%~n1.zip %~n1.love
 
 :eof
 pause

@@ -10,9 +10,11 @@ Anim8 = require 'libraries/anim8/anim8'
 sti = require 'libraries/Simple-Tiled-Implementation/sti'
 
 require 'libraries/utf8/utf8'
-require 'globals'
 require "utils"
 require 'ResourceLoader'
+
+default_color = {222/255, 222/255, 222/255}
+background_color = {16/255, 16/255, 16/255}
 
 function love.load()
     input = Input()

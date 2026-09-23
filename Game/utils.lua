@@ -25,6 +25,21 @@ function printText(...)
     print(M.reduce({...}, concat))
 end
 
+function getVectorMagnitude(x,y)
+    return math.sqrt(x*x + y*y)
+end
+
+function getUnitVector(x, y)
+    local magnitude = getVectorMagnitude(x, y)
+    
+    -- Prevent division by zero if the vector is (0,0)
+    if magnitude == 0 then
+        return 0, 0
+    end
+    
+    return { x = x / magnitude, y = y / magnitude }
+end
+
 function distanceBetweenPoints(x1, y1, x2, y2)
     return math.sqrt((x2 - x1)^2 +(y2 - y1)^2)
 end
@@ -172,4 +187,16 @@ function printInsideRect(text, font, side, offset, rect)
     end
 
     love.graphics.print(text, x, y, 0, 1, 1, ox, oy)
+end
+
+function getCenter(rect)
+    return {
+        x = rect.x + rect.w / 2,
+        y = rect.y + rect.h / 2
+    }
+end
+
+-- by default colors are passed by reference
+function deepCopyColor(color)
+    return {color[1], color[2], color[3], color[4]}
 end
