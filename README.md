@@ -4,15 +4,26 @@ A lightweight starter project for building games with [LÖVE](https://love2d.org
 
 It includes a basic project structure, commonly used libraries, and some helper scripts for quickly starting and building a game.
 
-## Getting Started
+## Starting a New Project
 
-Clone the repository:
+The recommended way to use this repository is as a GitHub template.
 
-```bash
-git clone https://github.com/felipevk/Love2D-StarterProject.git
+On GitHub, click:
+
+```text
+Use this template → Create a new repository
 ```
 
-The game itself is located inside the `Game` folder.
+This creates a new repository containing the starter project files without copying the original commit history.
+
+You can then clone your new repository normally:
+
+```bash
+git clone https://github.com/yourname/MyNewGame.git
+```
+
+If you clone this repository directly instead, Git will keep `Love2D-StarterProject` configured as the `origin` remote.
+
 
 ### Running the Game
 
