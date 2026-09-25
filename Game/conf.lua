@@ -7,6 +7,7 @@ sy = 1
 debug = false
 drawCol = false
 useShader = true
+automaticAssetLoad = true
 
 function love.conf(t)
 	t.identity = nil                   -- The name of the save directory (string)

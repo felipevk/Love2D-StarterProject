@@ -1,5 +1,4 @@
 Object = require 'libraries/classic/classic'
-Input = require 'libraries/boipushy/Input'
 Timer = require 'libraries/EnhancedTimer/EnhancedTimer'
 M = require "libraries/Moses/moses"
 Camera = require 'libraries/hump/camera'
@@ -9,9 +8,10 @@ Draft = require 'libraries/draft/draft'
 Anim8 = require 'libraries/anim8/anim8'
 sti = require 'libraries/Simple-Tiled-Implementation/sti'
 
+Input = require 'core.input_handler'
 require 'libraries/utf8/utf8'
-require "utils"
-require 'ResourceLoader'
+require "core.utils"
+require 'core.assets'
 
 default_color = {222/255, 222/255, 222/255}
 background_color = {16/255, 16/255, 16/255}
@@ -40,20 +40,11 @@ function love.load()
     flash_frames = nil
     flashColor = {1,1,1,1}
 
-    textures = LoadTextures("resources/sprites")
-    fonts = LoadFonts("resources/fonts")
-    audioStream = LoadSounds("resources/audio/stream", "stream")
-    audioStatic = LoadSounds("resources/audio/static", "static")
-    shaders = LoadShaders("resources/shaders")
-
-    input:bind('left', 'left')
-    input:bind('right', 'right')
-    input:bind('a', 'left')
-    input:bind('d', 'right')
-    input:bind('up', 'up')
-    input:bind('down', 'down')
-    input:bind('w', 'up')
-    input:bind('s', 'down')
+    if automaticAssetLoad then
+        autoloadAssets()
+    end
+    input:bindCommon()
+    input:bind('escape', 'exit')
 
     gotoRoom("Room")
 
