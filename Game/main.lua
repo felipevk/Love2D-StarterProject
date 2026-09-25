@@ -9,9 +9,11 @@ Anim8 = require 'libraries/anim8/anim8'
 sti = require 'libraries/Simple-Tiled-Implementation/sti'
 
 Input = require 'core.input_handler'
+DebugTools = require 'core.DebugTools'
 require 'libraries/utf8/utf8'
 require "core.utils"
 require 'core.assets'
+require 'core.memory'
 
 default_color = {222/255, 222/255, 222/255}
 background_color = {16/255, 16/255, 16/255}
@@ -21,6 +23,7 @@ function love.load()
     timer = Timer()
     camera = Camera()
     draft = Draft()
+    debugTools = DebugTools()
 
     --resize(2)
 
@@ -44,11 +47,10 @@ function love.load()
         autoloadAssets()
     end
     input:bindCommon()
-    input:bind('escape', 'exit')
+
+    AddTestShortcuts()
 
     gotoRoom("Room")
-
-    if debug then debugTools = DebugTools() end
 end
 
 function love.update(dt)
@@ -74,9 +76,6 @@ function love.draw()
     if debug then debugTools:draw() end
 end
 
-function love.keypressed(key)
-end
-
 function gotoRoom(room_type, ...)
     if current_room and current_room.destroy then current_room:destroy() end
     current_room = _G[room_type](...)
@@ -95,57 +94,6 @@ end
 function flash(frames, color)
     flash_frames = frames
     flashColor = color or {1,1,1,0.5}
-end
-
-function checkGC()
-    -- Counts how many of each object type exist in memory after garbage collection
-    print("Before collection: " .. collectgarbage("count")/1024)
-    collectgarbage()
-    print("After collection: " .. collectgarbage("count")/1024)
-    print("Object count: ")
-    local counts = type_count()
-    for k, v in pairs(counts) do print(k, v) end
-    print("-------------------------------------")
-end
-
-function count_all(f)
-    local seen = {}
-    local count_table
-    count_table = function(t)
-        if seen[t] then return end
-            f(t)
-	    seen[t] = true
-	    for k,v in pairs(t) do
-	        if type(v) == "table" then
-		    count_table(v)
-	        elseif type(v) == "userdata" then
-		    f(v)
-	        end
-	end
-    end
-    count_table(_G)
-end
-
-function type_count()
-    local counts = {}
-    local enumerate = function (o)
-        local t = type_name(o)
-        counts[t] = (counts[t] or 0) + 1
-    end
-    count_all(enumerate)
-    return counts
-end
-
-global_type_table = nil
-function type_name(o)
-    if global_type_table == nil then
-        global_type_table = {}
-            for k,v in pairs(_G) do
-	        global_type_table[v] = k
-	    end
-	global_type_table[0] = "table"
-    end
-    return global_type_table[getmetatable(o) or 0] or "Unknown"
 end
 
 function AddTestShortcuts()
