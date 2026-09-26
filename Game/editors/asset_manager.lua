@@ -1,6 +1,9 @@
 local AssetManager = Object:extend()
 local Slab = require 'libraries.Slab.Slab'
 
+require 'core.assets'
+require 'core.utils'
+
 local columns = {
     filename = 0,
     type     = 200,
@@ -15,27 +18,32 @@ local function Cell(rowX, rowY, offset)
     Slab.SetCursorPos(rowX + offset, rowY)
 end
 
-local function loadAssets()
-    local file = assert(io.open(assetTablePath, "r"))
-
-    local content = file:read("*a")
-    file:close()
-
-    local chunk = assert(load(content))
-
-    return chunk()
-end
-
 local function serializeAssets(tbl)
     local lines = {"return {"}
 
     for _, asset in ipairs(tbl) do
-        table.insert(lines, string.format(
-            '    { name = %q, type = %q, handle = %q },',
-            asset.name,
-            asset.type,
-            asset.handle
-        ))
+        local line
+
+        if asset.type == "sound" then
+            line = string.format(
+                '    { name = %q, type = %q, uuid = %q, handle = %q, audioMode = %q },',
+                asset.name,
+                asset.type,
+                asset.uuid,
+                asset.handle,
+                asset.audioMode
+            )
+        else
+            line = string.format(
+                '    { name = %q, type = %q, uuid = %q, handle = %q },',
+                asset.name,
+                asset.type,
+                asset.uuid,
+                asset.handle
+            )
+        end
+
+        table.insert(lines, line)
     end
 
     table.insert(lines, "}")
@@ -62,20 +70,36 @@ local function saveAssets()
     return true
 end
 
+-- for image thumbnails
+local function loadImage(asset)
+    icons[asset.uuid] = love.graphics.newImage("resources/sprites/" .. asset.name)
+end
+
+local function loadImages()
+    for _, asset in ipairs(assets) do
+        if asset.type == "image" then
+            loadImage(asset)
+        end
+    end
+end
+
 function AssetManager:new()
     Slab.Initialize()
 
     local style = Slab.GetStyle()
     style.WindowTitleFocusedColor = {0.95, 0.30, 0.55, 1.0}
 
-    assets = loadAssets()
+    assets = deserializeAssetTable(assetTablePath)
+
+    icons = {}
+
+    loadImages()
 
     resize(1.5)
 
     self.showFileDialog = false
     self.notification = nil
 
-    icons = {}
     icons.font = love.graphics.newImage("editors/font.png")
     icons.image = love.graphics.newImage("editors/image.png")
     icons.sound = love.graphics.newImage("editors/sound.png")
@@ -131,11 +155,18 @@ local function parseAssetPath(path)
         return nil
     end
 
-    return {
+    result = {
         name = fileName,
         type = assetType,
+        uuid = UUID(),
         handle = ""
     }
+
+    if assetType == "sound" then
+        result.audioMode = "static"
+    end
+
+    return result
 end
 
 function AssetManager:update(dt)
@@ -189,6 +220,9 @@ function AssetManager:handeFileDialog()
                 newAsset = parseAssetPath(filePath)
                 if newAsset then
                     table.insert(assets,newAsset)
+                    if newAsset.type == "image" then
+                        loadImage(newAsset)
+                    end
                 end
             end
             self.showFileDialog = false
@@ -241,10 +275,17 @@ function AssetManager:updatePropertiesPanel()
     Slab.Text("File:")
     Slab.SetLayoutColumn(2)
     Slab.Text(assets[self.selectedAsset].name)
+
     Slab.SetLayoutColumn(1)
     Slab.Text("Asset Type:")
     Slab.SetLayoutColumn(2)
     Slab.Text(assets[self.selectedAsset].type)
+
+    Slab.SetLayoutColumn(1)
+    Slab.Text("UUID:")
+    Slab.SetLayoutColumn(2)
+    Slab.Text(assets[self.selectedAsset].uuid)
+
     Slab.SetLayoutColumn(1)
     Slab.Text("Handle:")
     Slab.SetLayoutColumn(2)
@@ -252,6 +293,26 @@ function AssetManager:updatePropertiesPanel()
         Text = assets[self.selectedAsset].handle
     }) then
         assets[self.selectedAsset].handle = Slab.GetInputText()
+    end
+
+    if assets[self.selectedAsset].type == "sound" then
+        Slab.SetLayoutColumn(1)
+        Slab.Text("Mode")
+        Slab.SetLayoutColumn(2)
+        if Slab.BeginComboBox("audioMode", {
+            Selected = assets[self.selectedAsset].audioMode
+        }) then
+
+            if Slab.TextSelectable("Static") then
+                assets[self.selectedAsset].audioMode = "static"
+            end
+
+            if Slab.TextSelectable("Stream") then
+                assets[self.selectedAsset].audioMode = "stream"
+            end
+
+            Slab.EndComboBox()
+        end
     end
 
     Slab.EndLayout()
@@ -289,9 +350,18 @@ function AssetManager:updateAssetList()
         Slab.Text(asset.name)
         
         Cell(x, y, columns.type)
-        Slab.Image("AssetIcon" .. i, {
-            Image = icons[asset.type]
-        })
+        if asset.type == "image" then
+            Slab.Image("AssetIcon" .. i, {
+                Image = icons[asset.uuid],
+                W = 32,
+                H = 32
+            })
+        else
+            Slab.Image("AssetIcon" .. i, {
+                Image = icons[asset.type]
+            })
+        end
+        
 
         Cell(x, y, columns.type + 40)
         Slab.Text(asset.type)
@@ -302,6 +372,9 @@ function AssetManager:updateAssetList()
         Cell(x, y, columns.actions)
         if Slab.Button("Remove", {H = 20}) then
             table.remove(assets,i)
+            if i == self.selectedAsset then
+                self.selectedAsset = nil
+            end
         end
 
         if asset.handle == "" then

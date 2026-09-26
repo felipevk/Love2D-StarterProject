@@ -19,13 +19,34 @@ require 'core.memory'
 default_color = {222/255, 222/255, 222/255}
 background_color = {16/255, 16/255, 16/255}
 
-function love.load()
+local function parseArgs()
+    local result = {}
+
+    for i, value in ipairs(arg) do
+        if value == "--editor" then
+            result.editor = arg[i + 1]
+        elseif value == "--debug" then
+            result.debug = true
+        end
+    end
+
+    return result
+end
+
+function love.load(args)
     input = Input()
     timer = Timer()
     camera = Camera()
     draft = Draft()
     debugTools = DebugTools()
-    assetManager = AssetManager()
+    
+
+    local args = parseArgs()
+
+    if args.editor == "assets" then
+        editorMode = true
+        assetManager = AssetManager()
+    end
 
     --resize(1.5)
 
@@ -45,14 +66,14 @@ function love.load()
     flash_frames = nil
     flashColor = {1,1,1,1}
 
-    if automaticAssetLoad then
-        autoloadAssets()
-    end
+    loadAssetsFromTable()
     input:bindCommon()
 
     AddTestShortcuts()
 
-    gotoRoom("Room")
+    if not editorMode then
+        gotoRoom("Room")
+    end
 end
 
 function love.update(dt)
@@ -60,7 +81,7 @@ function love.update(dt)
     camera:update(dt*slow_amount)
     if current_room then current_room:update(dt*slow_amount) end
     if debugMode then debugTools:update(dt) end
-    assetManager:update(dt)
+    if editorMode then assetManager:update(dt) end
 end
 
 function love.draw()
@@ -78,7 +99,7 @@ function love.draw()
 
     if debugMode then debugTools:draw() end
 
-    assetManager:draw()
+    if editorMode then assetManager:draw() end
 end
 
 function gotoRoom(room_type, ...)
