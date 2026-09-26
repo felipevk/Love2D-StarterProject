@@ -54,6 +54,19 @@ The project provides support for things such as:
 * Resource loading
 * Sprite animation
 * Tiled maps
+* Asset management tool
+
+## Asset Manager
+
+The Asset Manager Editor provides a small visual interface for adding and managing assets.
+
+Supported asset types currently include:
+- Images
+- Fonts
+- Audio files
+- Shaders
+
+The asset handle is the name used by game code to access the resource.
 
 ## Creating Game Objects
 
