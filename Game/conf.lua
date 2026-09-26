@@ -4,7 +4,7 @@ gh = 540
 -- do not change these directly, use the resize method instead
 sx = 1
 sy = 1
-debug = false
+debugMode = false
 drawCol = false
 useShader = true
 automaticAssetLoad = true

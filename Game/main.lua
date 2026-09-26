@@ -10,6 +10,7 @@ sti = require 'libraries/Simple-Tiled-Implementation/sti'
 
 Input = require 'core.input_handler'
 DebugTools = require 'core.DebugTools'
+AssetManager = require 'editors.asset_manager'
 require 'libraries/utf8/utf8'
 require "core.utils"
 require 'core.assets'
@@ -24,8 +25,9 @@ function love.load()
     camera = Camera()
     draft = Draft()
     debugTools = DebugTools()
+    assetManager = AssetManager()
 
-    --resize(2)
+    --resize(1.5)
 
     GameObject = require("objects/GameObject")
 
@@ -57,7 +59,8 @@ function love.update(dt)
     timer:update(dt*slow_amount)
     camera:update(dt*slow_amount)
     if current_room then current_room:update(dt*slow_amount) end
-    if debug then debugTools:update(dt) end
+    if debugMode then debugTools:update(dt) end
+    assetManager:update(dt)
 end
 
 function love.draw()
@@ -73,7 +76,9 @@ function love.draw()
         love.graphics.setColor(1, 1, 1)
     end
 
-    if debug then debugTools:draw() end
+    if debugMode then debugTools:draw() end
+
+    assetManager:draw()
 end
 
 function gotoRoom(room_type, ...)
@@ -98,5 +103,5 @@ end
 
 function AddTestShortcuts()
     input:bind('f1', checkGC )
-    input:bind('f3', function() debug = not debug end )
+    input:bind('f3', function() debugMode = not debugMode end )
 end
