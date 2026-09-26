@@ -12,6 +12,18 @@ local columns = {
     warning  = 800
 }
 
+local colors = {
+    Background = {0.09, 0.10, 0.12},
+    Panel = {0.12, 0.13, 0.16},
+    Border = {0.20, 0.22, 0.26},
+
+    Text = {0.94, 0.95, 0.97},
+    TextMuted = {0.65, 0.68, 0.72},
+
+    Accent = {0.16, 0.47, 0.94},
+    Error = {1.00, 0.27, 0.31},
+}
+
 local assetTablePath = "resources/asset_table.lua"
 
 local function Cell(rowX, rowY, offset)
@@ -86,9 +98,6 @@ end
 function AssetManager:new()
     Slab.Initialize()
 
-    local style = Slab.GetStyle()
-    style.WindowTitleFocusedColor = {0.95, 0.30, 0.55, 1.0}
-
     assets = deserializeAssetTable(assetTablePath)
 
     icons = {}
@@ -104,6 +113,30 @@ function AssetManager:new()
     icons.image = love.graphics.newImage("editors/image.png")
     icons.sound = love.graphics.newImage("editors/sound.png")
     icons.shader = love.graphics.newImage("editors/shader.png")
+
+    fonts.editorMain = love.graphics.newFont("editors/Inter_18pt-Medium.ttf", 18)
+    fonts.editorBold = love.graphics.newFont("editors/Inter_18pt-Bold.ttf", 18)
+
+    local style = Slab.GetStyle()
+
+    -- Window / panel background
+    style.WindowBackgroundColor = colors.Background
+    style.WindowTitleFocusedColor = colors.border
+
+    -- General text
+    style.TextColor = colors.Text
+
+    -- Buttons
+    style.ButtonColor = colors.Panel
+    style.ButtonHoveredColor = colors.Accent
+    style.ButtonPressedColor = colors.Accent
+
+    -- List item selection
+    style.ListBoxItemSelectedColor = colors.Accent
+
+    style.Font = fonts.editorMain
+
+    love.graphics.setBackgroundColor(colors.Background)
 end
 
 function AssetManager:canSave()
@@ -266,11 +299,15 @@ function AssetManager:updatePropertiesPanel()
         return
     end
     
+    Slab.PushFont(fonts.editorBold)
+    Slab.Text("Properties")
+    Slab.PopFont()
     
     Slab.BeginLayout("PropertiesPanel", {
         Columns = 2,
         W = 300
     })
+
     Slab.SetLayoutColumn(1)
     Slab.Text("File:")
     Slab.SetLayoutColumn(2)
