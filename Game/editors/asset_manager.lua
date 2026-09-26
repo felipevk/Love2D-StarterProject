@@ -218,8 +218,6 @@ function AssetManager:update(dt)
         self.showFileDialog = true
     end
 
-    self:handeFileDialog()
-
     Slab.SameLine()
     if Slab.Button("Save",{
         Disabled = not self:canSave()
@@ -238,6 +236,7 @@ function AssetManager:update(dt)
 	Slab.EndWindow()
 
     self:updateNotification()
+    self:handeFileDialog()
 end
 
 function AssetManager:handeFileDialog()
