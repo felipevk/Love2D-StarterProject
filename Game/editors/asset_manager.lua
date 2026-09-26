@@ -74,6 +74,12 @@ function AssetManager:new()
 
     self.showFileDialog = false
     self.notification = nil
+
+    icons = {}
+    icons.font = love.graphics.newImage("editors/font.png")
+    icons.image = love.graphics.newImage("editors/image.png")
+    icons.sound = love.graphics.newImage("editors/sound.png")
+    icons.shader = love.graphics.newImage("editors/shader.png")
 end
 
 function AssetManager:canSave()
@@ -283,13 +289,18 @@ function AssetManager:updateAssetList()
         Slab.Text(asset.name)
         
         Cell(x, y, columns.type)
+        Slab.Image("AssetIcon" .. i, {
+            Image = icons[asset.type]
+        })
+
+        Cell(x, y, columns.type + 40)
         Slab.Text(asset.type)
         
         Cell(x, y, columns.handle)
         Slab.Text(asset.handle)
         
         Cell(x, y, columns.actions)
-        if Slab.Button("Remove") then
+        if Slab.Button("Remove", {H = 20}) then
             table.remove(assets,i)
         end
 
@@ -297,6 +308,14 @@ function AssetManager:updateAssetList()
             Cell(x, y, columns.warning)
             Slab.Text("Handle required", {Color = {1, 0, 0, 1}})
         end
+        
+        -- Adding this to force the row height to this size
+        -- For some reason only the last item influences it
+        Slab.Button("##RowHeight" .. i, {
+            Invisible = true,
+            W = 1,
+            H = 40
+        })
 
         if Slab.IsListBoxItemClicked() then
             self.selectedAsset = i
