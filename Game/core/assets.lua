@@ -50,7 +50,7 @@ function loadAssetsFromTable()
             end,
         font = 
             function(asset)
-                fonts[asset.handle] = love.graphics.newFont("resources/fonts/" .. asset.name)
+                fonts[asset.handle] = love.graphics.newFont("resources/fonts/" .. asset.name, asset.fontSize)
             end,
         sound =
             function(asset)

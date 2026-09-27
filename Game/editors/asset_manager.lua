@@ -45,6 +45,15 @@ local function serializeAssets(tbl)
                 asset.handle,
                 asset.audioMode
             )
+        elseif asset.type == "font" then
+            line = string.format(
+                '    { name = %q, type = %q, uuid = %q, handle = %q, fontSize = %d },',
+                asset.name,
+                asset.type,
+                asset.uuid,
+                asset.handle,
+                asset.fontSize
+            )
         else
             line = string.format(
                 '    { name = %q, type = %q, uuid = %q, handle = %q },',
@@ -330,6 +339,18 @@ function AssetManager:updatePropertiesPanel()
     }) then
         assets[self.selectedAsset].handle = Slab.GetInputText()
     end
+
+    if assets[self.selectedAsset].type == "font" then
+        Slab.SetLayoutColumn(1)
+        Slab.Text("Font Size:")
+        Slab.SetLayoutColumn(2)
+        if Slab.Input("fontSize", {
+                Text = assets[self.selectedAsset].fontSize
+            }) then
+            assets[self.selectedAsset].fontSize = Slab.GetInputText()
+        end
+    end
+
 
     if assets[self.selectedAsset].type == "sound" then
         Slab.SetLayoutColumn(1)
