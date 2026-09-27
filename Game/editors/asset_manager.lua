@@ -252,7 +252,7 @@ function AssetManager:update(dt)
     })
 
     Slab.PushFont(fonts.editorHeader)
-    Slab.Text("Asset Editor")
+    Slab.Text("Asset Manager")
     Slab.PopFont()
 
     Slab.Separator()
@@ -464,7 +464,7 @@ function AssetManager:updateAssetList()
     Slab.Text("File Name")
     
     Cell(x, y, columns.type)
-    Slab.Text("Preview / Type")
+    Slab.Text("Type")
     
     Cell(x, y, columns.handle)
     Slab.Text("Asset Handle")
