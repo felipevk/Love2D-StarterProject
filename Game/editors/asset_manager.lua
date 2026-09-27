@@ -6,10 +6,10 @@ require 'core.utils'
 
 local columns = {
     filename = 0,
-    type     = 200,
-    handle   = 400,
-    actions  = 600,
-    warning  = 800
+    type     = 350,
+    handle   = 550,
+    actions  = 750,
+    warning  = 950
 }
 
 local colors = {
@@ -22,6 +22,8 @@ local colors = {
 
     Accent = {0.16, 0.47, 0.94},
     Error = {1.00, 0.27, 0.31},
+
+    Button = { 0.26, 0.32, 0.40 }
 }
 
 local assetTablePath = "resources/asset_table.lua"
@@ -104,27 +106,53 @@ local function loadImages()
     end
 end
 
+local function loadSound(asset)
+    sounds[asset.uuid] = love.audio.newSource("resources/audio/" .. asset.name, asset.audioMode)
+end
+
+local function loadSounds()
+    for _, asset in ipairs(assets) do
+        if asset.type == "sound" then
+            loadSound(asset)
+        end
+    end
+end
+
 function AssetManager:new()
     Slab.Initialize()
 
     assets = deserializeAssetTable(assetTablePath)
 
-    icons = {}
+    icons = {
+        font = {},
+        image = {},
+        sound = {},
+        shader = {}
+    }
 
     loadImages()
+    loadSounds()
 
     resize(1.5)
 
     self.showFileDialog = false
     self.notification = nil
+    
+    icons.font.icon = love.graphics.newImage("editors/font_icon_32x32.png")
+    icons.font.label = love.graphics.newImage("editors/font_label_96x32.png")
 
-    icons.font = love.graphics.newImage("editors/font.png")
-    icons.image = love.graphics.newImage("editors/image.png")
-    icons.sound = love.graphics.newImage("editors/sound.png")
-    icons.shader = love.graphics.newImage("editors/shader.png")
+    icons.image.icon = love.graphics.newImage("editors/image_icon_32x32.png")
+    icons.image.label = love.graphics.newImage("editors/image_label_96x32.png")
 
-    fonts.editorMain = love.graphics.newFont("editors/Inter_18pt-Medium.ttf", 18)
-    fonts.editorBold = love.graphics.newFont("editors/Inter_18pt-Bold.ttf", 18)
+    icons.sound.icon = love.graphics.newImage("editors/sound_icon_32x32.png")
+    icons.sound.label = love.graphics.newImage("editors/sound_label_96x32.png")
+
+    icons.shader.icon = love.graphics.newImage("editors/shader_icon_32x32.png")
+    icons.shader.label = love.graphics.newImage("editors/shader_label_96x32.png")
+
+    fonts.editorMain = love.graphics.newFont("editors/Inter_18pt-Medium.ttf", 19)
+    fonts.editorHeader = love.graphics.newFont("editors/Inter_18pt-Bold.ttf", 50)
+    fonts.editorMainBold = love.graphics.newFont("editors/Inter_18pt-Bold.ttf", 20)
 
     local style = Slab.GetStyle()
 
@@ -136,7 +164,7 @@ function AssetManager:new()
     style.TextColor = colors.Text
 
     -- Buttons
-    style.ButtonColor = colors.Panel
+    style.ButtonColor = colors.Button
     style.ButtonHoveredColor = colors.Accent
     style.ButtonPressedColor = colors.Accent
 
@@ -215,13 +243,21 @@ function AssetManager:update(dt)
     Slab.Update(dt)
 
     Slab.BeginWindow("AssetEditor", {
-        Title = "Asset Editor",
+        Title = "",
         X = 100,
         Y = 21,
         W = 900,
         H = 300,
         AutoSizeWindow = false
     })
+
+    Slab.PushFont(fonts.editorHeader)
+    Slab.Text("Asset Editor")
+    Slab.PopFont()
+
+    Slab.Separator()
+
+    Slab.PushFont(fonts.editorMain)
 
     if Slab.Button("Add") then
         self.showFileDialog = true
@@ -246,6 +282,8 @@ function AssetManager:update(dt)
 
     self:updateNotification()
     self:handeFileDialog()
+
+    Slab.PopFont()
 end
 
 function AssetManager:handeFileDialog()
@@ -263,6 +301,8 @@ function AssetManager:handeFileDialog()
                     table.insert(assets,newAsset)
                     if newAsset.type == "image" then
                         loadImage(newAsset)
+                    elseif newAsset.type == "sound" then
+                        loadSound(newAsset)
                     end
                 end
             end
@@ -306,25 +346,62 @@ function AssetManager:updatePropertiesPanel()
     if not self.selectedAsset then
         return
     end
+
+    local thumbW, thumbH = 64, 64
     
-    Slab.PushFont(fonts.editorBold)
+    Slab.PushFont(fonts.editorMainBold)
     Slab.Text("Properties")
     Slab.PopFont()
     
-    Slab.BeginLayout("PropertiesPanel", {
-        Columns = 2,
-        W = 300
+    Slab.BeginLayout("PropertiesHeader", {
+        Columns = 4
     })
-
     Slab.SetLayoutColumn(1)
-    Slab.Text("File:")
-    Slab.SetLayoutColumn(2)
+    if assets[self.selectedAsset].type == "image" then
+        Slab.Image("PropertiesIcon", {
+            Image = icons[assets[self.selectedAsset].uuid],
+            W = thumbW,
+            H = thumbH
+        })
+    else
+        Slab.Image("PropertiesIcon", {
+            Image = icons[assets[self.selectedAsset].type].icon,
+            W = thumbW,
+            H = thumbH
+        })
+    end
+    Slab.SameLine()
+    Slab.PushFont(fonts.editorMainBold)
     Slab.Text(assets[self.selectedAsset].name)
-
+    Slab.PopFont()
+    Slab.SetLayoutColumn(2)
+    if assets[self.selectedAsset].type == "sound" then
+        if Slab.Button("Preview") then
+            sounds[assets[self.selectedAsset].uuid]:play()
+        end
+    end
+    Slab.SetLayoutColumn(5)
+    Slab.Button("###RowHeight", {
+        Invisible = true,
+        W = 1,
+        H = 74
+    })
+    Slab.EndLayout()
+    Slab.BeginLayout("PropertiesPanel", {
+        Columns = 4
+    })
     Slab.SetLayoutColumn(1)
     Slab.Text("Asset Type:")
+    Slab.SameLine()
+    Slab.Button("###RowHeight", {
+        Invisible = true,
+        W = 1,
+        H = 32
+    })
     Slab.SetLayoutColumn(2)
-    Slab.Text(assets[self.selectedAsset].type)
+    Slab.Image("PropertiesIcon", {
+        Image = icons[assets[self.selectedAsset].type].label
+    })
 
     Slab.SetLayoutColumn(1)
     Slab.Text("UUID:")
@@ -376,7 +453,7 @@ function AssetManager:updatePropertiesPanel()
 end
 
 function AssetManager:updateAssetList()
-    Slab.BeginListBox("Assets",{StretchW = true, H = 400})
+    Slab.BeginListBox("Assets",{StretchW = true, H = 350})
     
     --header
     Slab.BeginListBoxItem("AssetHeader")
@@ -398,15 +475,13 @@ function AssetManager:updateAssetList()
 
     for i, asset in ipairs(assets) do
 
+        local labelYOffset = 12
+
         Slab.BeginListBoxItem("Asset" .. i, {
             Selected = self.selectedAsset == i
         })
         local x, y = Slab.GetCursorPos()
-        
         Cell(x, y, columns.filename)
-        Slab.Text(asset.name)
-        
-        Cell(x, y, columns.type)
         if asset.type == "image" then
             Slab.Image("AssetIcon" .. i, {
                 Image = icons[asset.uuid],
@@ -415,19 +490,29 @@ function AssetManager:updateAssetList()
             })
         else
             Slab.Image("AssetIcon" .. i, {
-                Image = icons[asset.type]
+                Image = icons[asset.type].icon
             })
         end
-        
 
-        Cell(x, y, columns.type + 40)
-        Slab.Text(asset.type)
+        y = y + labelYOffset
+        
+        Cell(x + 40, y, columns.filename)
+        Slab.Text(asset.name)
+        
+        y = y - labelYOffset
+        Cell(x, y, columns.type)
+        Slab.Image("AssetIcon" .. i, {
+            Image = icons[asset.type].label
+        })
+        y = y + labelYOffset
+
         
         Cell(x, y, columns.handle)
+        y = y - labelYOffset + 5
         Slab.Text(asset.handle)
         
         Cell(x, y, columns.actions)
-        if Slab.Button("Remove", {H = 20}) then
+        if Slab.Button("Remove") then
             table.remove(assets,i)
             if i == self.selectedAsset then
                 self.selectedAsset = nil
