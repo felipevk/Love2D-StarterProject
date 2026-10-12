@@ -1,22 +1,12 @@
-gw = 960
-gh = 540 
-
--- do not change these directly, use the resize method instead
-sx = 1
-sy = 1
-debugMode = false
-drawCol = false
-useShader = true
+GameConfig = {}
 
 function love.conf(t)
 	t.identity = nil                   -- The name of the save directory (string)
-    t.version = "11.5"                 -- The LÖVE version this game was made for (string)
+    t.version = "11.4"                 -- The LÖVE version this game was made for (string)
     t.console = true                   -- Attach a console (boolean, Windows only)
 
 	t.window.title = "Game"            -- The window title (string)
 	t.window.icon = nil                -- Filepath to an image to use as the window's icon (string)
-	t.window.width = gw                -- The window width (number)
-    t.window.height = gh               -- The window height (number)
 	t.window.borderless = false        -- Remove all border visuals from the window (boolean)
     t.window.resizable = true          -- Let the window be user-resizable (boolean)
 	t.window.minwidth = 1              -- Minimum window width if the window is resizable (number)
@@ -45,4 +35,16 @@ function love.conf(t)
     t.modules.timer = true             -- Enable the timer module (boolean), Disabling it will result 0 delta time in love.update
     t.modules.window = true            -- Enable the window module (boolean)
     t.modules.thread = true            -- Enable the thread module (boolean)
+
+    t.gw = 960
+    t.gh = 540
+    t.window.width = t.gw                 -- The window width (number) TODO coalesce this into single var set
+    t.window.height = t.gh                -- The window height (number)TODO coalesce this into single var set
+    t.sx = 1                            -- do not change these directly, use the resize method instead
+    t.sy = 1                            -- do not change these directly, use the resize method instead
+    t.debugMode = false
+    t.drawCol = false
+    t.useShader = true
+
+    GameConfig = t
 end

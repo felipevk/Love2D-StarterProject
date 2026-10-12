@@ -93,7 +93,7 @@ function love.draw()
     end
     if flash_frames then
         love.graphics.setColor(flashColor)
-        love.graphics.rectangle('fill', 0, 0, sx*gw, sy*gh)
+        love.graphics.rectangle('fill', 0, 0, GameConfig.sx * GameConfig.gw, GameConfig.sy * GameConfig.gh)
         love.graphics.setColor(1, 1, 1)
     end
 
@@ -108,8 +108,8 @@ function gotoRoom(room_type, ...)
 end
 
 function resize(s)
-    love.window.setMode(s*gw, s*gh) 
-    sx, sy = s, s
+    love.window.setMode(s * GameConfig.gw, s * GameConfig.gh)
+    GameConfig.sx, GameConfig.sy = s, s
 end
 
 function slow(amount, duration)

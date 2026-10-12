@@ -133,8 +133,8 @@ function printInsideRect(text, font, side, offset, rect)
     screenRect = {
         x = 0,
         y = 0,
-        w = gw,
-        h = gh,
+        w = GameConfig.gw,
+        h = GameConfig.gh,
     }
 
     rect = rect or screenRect
