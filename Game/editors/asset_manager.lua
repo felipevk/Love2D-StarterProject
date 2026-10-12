@@ -121,7 +121,7 @@ end
 function AssetManager:new()
     Slab.Initialize()
 
-    assets = deserializeAssetTable(assetTablePath)
+    assets = require("resources.asset_table")
 
     icons = {
         font = {},

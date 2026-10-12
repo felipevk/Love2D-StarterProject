@@ -1,7 +1,9 @@
 @echo off
 set loveVer=11.5
+set "gameName=%~2"
+if not defined gameName set "gameName=%~n1"
 set loveFolder=love-%loveVer%-win64
-set buildFolder=bin\%~n1-win64-standalone
+set buildFolder=bin\%gameName%-win64-standalone
 
 if not exist %loveFolder%\ (
 	echo This script requires love version %loveVer%
@@ -37,11 +39,11 @@ for %%I in (%loveFolder%\*.dll) do (
 cd %1\
 7z.exe a -r "..\%buildFolder%\%~n1.zip" 
 cd ../
-ren %buildFolder%\%~n1.zip %~n1.love 
+ren %buildFolder%\%~n1.zip %gameName%.love 
 
 :: combine love.exe with .love file to final game exe
-copy /b %loveFolder%\love.exe+%buildFolder%\%~n1.love "%buildFolder%\%~n1.exe"
-del %buildFolder%\%~n1.love
+copy /b %loveFolder%\love.exe+%buildFolder%\%gameName%.love "%buildFolder%\%gameName%.exe"
+del %buildFolder%\%gameName%.love
 
 :eof
-pause
+exit /b 0

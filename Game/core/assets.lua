@@ -31,17 +31,6 @@ function requireFiles(files)
     end
 end
 
-function deserializeAssetTable(path)
-    local file = assert(io.open(path, "r"))
-
-    local content = file:read("*a")
-    file:close()
-
-    local chunk = assert(load(content))
-
-    return chunk()
-end
-
 function loadAssetsFromTable()
     local load_func = {
         image =
@@ -62,10 +51,9 @@ function loadAssetsFromTable()
             end
     }
 
-    local tableData = deserializeAssetTable("resources/asset_table.lua")
+    local tableData = require("resources.asset_table")
 
     for _, asset in ipairs (tableData) do
-        print(asset.type)
         load_func[asset.type](asset)
     end
 

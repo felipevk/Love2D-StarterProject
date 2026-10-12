@@ -11,6 +11,7 @@ sti = require 'libraries/Simple-Tiled-Implementation/sti'
 Input = require 'core.input_handler'
 DebugTools = require 'core.DebugTools'
 AssetManager = require 'editors.asset_manager'
+BuildManager = require 'editors.build_manager'
 require 'libraries/utf8/utf8'
 require "core.utils"
 require 'core.assets'
@@ -45,7 +46,10 @@ function love.load(args)
 
     if args.editor == "assets" then
         editorMode = true
-        assetManager = AssetManager()
+        editor = AssetManager()
+    elseif args.editor == "build" then
+        editorMode = true
+        editor = BuildManager()
     end
 
     --resize(1.5)
@@ -81,7 +85,7 @@ function love.update(dt)
     camera:update(dt*slow_amount)
     if current_room then current_room:update(dt*slow_amount) end
     if debugMode then debugTools:update(dt) end
-    if editorMode then assetManager:update(dt) end
+    if editorMode then editor:update(dt) end
 end
 
 function love.draw()
@@ -99,7 +103,7 @@ function love.draw()
 
     if debugMode then debugTools:draw() end
 
-    if editorMode then assetManager:draw() end
+    if editorMode then editor:draw() end
 end
 
 function gotoRoom(room_type, ...)

@@ -1,7 +1,9 @@
 @echo off
 set loveVer=11.5
+set "gameName=%~2"
+if not defined gameName set "gameName=%~n1"
 set loveFolder=love-%loveVer%-win64
-set buildFolder=bin\%~n1-win64-love
+set buildFolder=bin\%gameName%-win64-love
 
 if not exist %loveFolder%\ (
 	echo This script requires love version %loveVer%
@@ -36,9 +38,9 @@ xcopy  %loveFolder%\love.exe %buildFolder%
 
 :: zip project files and change extension to .love
 cd %1\
-7z.exe a -r "..\%buildFolder%\%~n1.zip" 
+7z.exe a -r "..\%buildFolder%\%gameName%.zip" 
 cd ../
-ren %buildFolder%\%~n1.zip %~n1.love
+ren %buildFolder%\%gameName%.zip %gameName%.love 
 
 :eof
-pause
+exit /b 0
