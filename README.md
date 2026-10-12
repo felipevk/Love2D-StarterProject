@@ -55,6 +55,7 @@ The project provides support for things such as:
 * Sprite animation
 * Tiled maps
 * Asset management tool
+* Build Manager
 
 ## Asset Manager
 
@@ -130,13 +131,18 @@ To switch to another room:
 gotoRoom("RoomName")
 ```
 
-## Building for Windows
+## Packaging
 
-The repository includes scripts for creating `.love` packages and standalone Windows builds:
+You can use the build manager tool to generate builds for multiple platforms.
+```text
+Game/run_build_manager.bat
+```
+Alternatively, you can also use the build scripts directly, by dragging the Game folder into them:
 
 ```text
 build-love-win64.bat
 build-standalone-win64.bat
+...
 ```
 
 The build scripts require `7z.exe` to be available from the command line.
