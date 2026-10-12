@@ -60,7 +60,7 @@ function BuildManager:new()
 
     self.gameName = GameConfig.window.title
 
-    self.canBuild = true
+    self.running = false
 
     self.buildTypes = {
         { 
@@ -134,8 +134,22 @@ function BuildManager:new()
     }
 end
 
+function BuildManager:canBuild()
+    if self.running then
+        return false
+    end
+
+    for _, buildType in ipairs(self.buildTypes) do
+        if buildType.enabled then
+            return true
+        end
+    end
+
+    return false
+end
+
 function BuildManager:build(gameName)
-    self.canBuild = false
+    self.running = true
     local success = true
     local err = ''
     for i, buildType in ipairs(self.buildTypes) do
@@ -151,7 +165,7 @@ function BuildManager:build(gameName)
         end
     end
 
-    self.canBuild = true
+    self.running = false
     return success, err
 end
 
@@ -163,9 +177,11 @@ function BuildManager:update(dt)
         X = 100,
         Y = 21,
         W = 900,
-        H = 300,
+        H = 190,
         AutoSizeWindow = false
     })
+
+    local windowW, _ = Slab.GetWindowSize()
 
     Slab.PushFont(fonts.editorHeader)
     Slab.Text("Build Manager")
@@ -174,6 +190,8 @@ function BuildManager:update(dt)
     Slab.Separator()
 
     Slab.PushFont(fonts.editorMain)
+
+    
 
     Slab.Text("Game Name")
     if Slab.Input("gameName", {
@@ -186,14 +204,34 @@ function BuildManager:update(dt)
 
     Slab.Text("Build Types")
 
+    local x, y = Slab.GetCursorPos()
+    local innerPadding = 6
+    local lineH = 30
+    local rectW, rectH = windowW -  10, (innerPadding * 2) + (#self.buildTypes * lineH)
+
+    Slab.Rectangle({
+        W = rectW,
+        H = rectH,
+        Color = colors.Panel,
+        Outline = true,
+        OutlineColor = colors.Border,
+        Rounding = 4
+    })
+
+    Slab.SetCursorPos(x + innerPadding, y + innerPadding)
+
     for i, buildType in ipairs(self.buildTypes) do
         if Slab.CheckBox(buildType.enabled, buildType.name) then
             buildType.enabled = not buildType.enabled
         end
+        Slab.SetCursorPos(x + innerPadding, y + innerPadding +(lineH * (i)))
     end
 
+    Slab.SetCursorPos(x, y + rectH + 8)
+
     if Slab.Button("Build", {
-            Disabled = not self.canBuild
+            W = rectW,
+            Disabled = not self:canBuild()
         }) then
         
         local success, err = self:build(self.gameName)
