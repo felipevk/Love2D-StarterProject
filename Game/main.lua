@@ -10,8 +10,6 @@ sti = require 'libraries/Simple-Tiled-Implementation/sti'
 
 Input = require 'core.input_handler'
 DebugTools = require 'core.DebugTools'
-AssetManager = require 'editors.asset_manager'
-BuildManager = require 'editors.build_manager'
 require 'libraries/utf8/utf8'
 require "core.utils"
 require 'core.assets'
@@ -45,9 +43,11 @@ function love.load(args)
     local args = parseArgs()
 
     if args.editor == "assets" then
+        AssetManager = require 'editors.asset_manager'
         editorMode = true
         editor = AssetManager()
     elseif args.editor == "build" then
+        BuildManager = require 'editors.build_manager'
         editorMode = true
         editor = BuildManager()
     end
